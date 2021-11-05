@@ -5,6 +5,8 @@ let resultBox = document.getElementById('resultBox');
 let equals = document.getElementById('equals');
 let plusMinus = document.getElementById('plusMinus');
 let allClear = document.getElementById('ac');
+let decimal = document.getElementById('decimal');
+let displayOperator = document.getElementById('operatorBox');
 
 let displayNum = '';
 let operatorPressedPast, operatorPressedPresent = '';
@@ -23,35 +25,44 @@ function clickNum() {
 function calculate(rN) {
 
     switch (operatorPressedPast) {
-        case 'sum':
-            rN += +displayNum;
+        case '+':
+            rN += (+displayNum);
             break;
-        case 'subtract':
-            rN -= +displayNum;
+        case '-': //have to fix minus bug
+            rN -= (+displayNum);
             break;
-        case 'multiply':
-            rN *= +displayNum;
+        case '*':
+            rN *= (+displayNum);
             break;
-        case 'divide':
-            rN /= +displayNum;
+        case '/':
+            rN /= (+displayNum);
             break;
-        case 'percent':
-            rN = (rN * +displayNum)/100;
+        case '%':
+            rN = (rN * (+displayNum))/100;
             break;
     }
     return rN;
 }
 
 function clickOperator() {
+    console.log(operatorPressedPast);
     operatorPressedPresent = this.id;
+    
+
     if (resultNum === '') {
-        resultNum = +displayNum;
+        resultNum = (+displayNum);
         operatorPressedPast = this.id;        
+    } else if (displayNum === '') {
+        operatorPressedPast = operatorPressedPresent;
+
     } else {
         
         resultNum = calculate(resultNum);
         operatorPressedPast = operatorPressedPresent;
     }
+
+    displayOperator.innerHTML='';
+    displayOperator.append(operatorPressedPast);
 
     displayBox.innerHTML='';
     displayNum = '';
@@ -61,13 +72,22 @@ function clickOperator() {
     
 }
 
-function clickedEqual() {
-    resultNum = calculate(resultNum);
-    displayBox.innerHTML='';
-    displayNum = '';
-    
-    resultBox.innerHTML='';
-    resultBox.append(resultNum);
+function clickedEqual() {//have to fix no resultbox equal
+    if (resultNum === '' || operatorPressedPast == undefined) {
+        console.log(operatorPressedPast);
+        resultNum = displayNum;
+        displayBox.innerHTML='';
+        displayNum = '';
+        resultBox.innerHTML = '';
+        resultBox.append(resultNum);
+    } else {
+        resultNum = calculate(resultNum);
+        displayBox.innerHTML = '';
+        displayNum = '';
+
+        resultBox.innerHTML = '';
+        resultBox.append(resultNum);
+    }
 }
 
 function makeNegative() {
@@ -92,6 +112,28 @@ function clearAll() {
     
     resultBox.innerHTML='';
     resultNum = '';
+
+    displayOperator.innerHTML='';    
+}
+
+function insertDecimal() { //have to fix empty decimal str pass
+    let tempArray = displayNum.split('');
+    let decimalCheck = tempArray.some(function(item){
+        if(item === '.'){
+            console.log('not');
+            return true;
+        } else {
+            return false;
+
+        }
+    })
+    if(!decimalCheck) {
+        console.log('here');
+        displayNum += '.';
+        displayBox.innerHTML = '';
+        displayBox.append(displayNum);
+        console.log(displayNum);
+    }
 }
 
 operators.forEach(operator => operator.addEventListener('click', clickOperator));
@@ -103,3 +145,5 @@ equals.addEventListener('click', clickedEqual);
 plusMinus.addEventListener('click',makeNegative);
 
 allClear.addEventListener('click', clearAll);
+
+decimal.addEventListener('click', insertDecimal);
