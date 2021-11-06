@@ -2,9 +2,9 @@ let numberButtons = document.querySelectorAll('.numbers');
 let operators = document.querySelectorAll('.operator');
 let displayBox = document.getElementById('displayBox');
 let resultBox = document.getElementById('resultBox');
-let equals = document.getElementById('equals');
-let plusMinus = document.getElementById('plusMinus');
-let allClear = document.getElementById('ac');
+let equals = document.querySelector('.equals');
+let plusMinus = document.querySelector('.plusMinus');
+let allClear = document.querySelector('.ac');
 let decimal = document.getElementById('decimal');
 let displayOperator = document.getElementById('operatorBox');
 

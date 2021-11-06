@@ -91,17 +91,17 @@ button {
     flex: 2.25;
 }
 
-#ac {
+.ac {
     background-color: rgb(109, 138, 167);
 }
 
 .operator,
-#equals,
-#plusMinus {
+.equals,
+.plusMinus {
     background-color: rgb(165, 185, 206);
 }
 
 .animate {
     transform:scale(0.95);
-    background-color: rgb(137, 255, 255);
+    opacity: 0.75;
 }
