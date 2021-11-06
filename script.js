@@ -8,47 +8,43 @@ let allClear = document.getElementById('ac');
 let decimal = document.getElementById('decimal');
 let displayOperator = document.getElementById('operatorBox');
 
-let displayNum = '';
-let operatorPressedPast, operatorPressedPresent = '';
+let displayNum = '', resultNum = '';
+let operatorPressedPast = '', operatorPressedPresent = '';
 
-let resultNum = '';
+let buttonAnimation = document.querySelectorAll('button')
 
 function clickNum() {
     let tempNum = this.textContent;
     displayNum += tempNum;
-    
     displayBox.innerHTML='';
     displayBox.append(displayNum);
-
 }
 
 function calculate(rN) {
-
     switch (operatorPressedPast) {
         case '+':
             rN += (+displayNum);
             break;
-        case '-': //have to fix minus bug
-            rN -= (+displayNum);
+        case '-':
+            rN = rN - +displayNum;
             break;
         case '*':
             rN *= (+displayNum);
             break;
         case '/':
-            rN /= (+displayNum);
+            if (+displayNum === 0) alert ("Oops! Cannot divide by 0");
+            else rN /= (+displayNum);
             break;
         case '%':
             rN = (rN * (+displayNum))/100;
             break;
     }
+    rN = Math.floor(rN*1000)/1000;
     return rN;
 }
 
 function clickOperator() {
-    console.log(operatorPressedPast);
     operatorPressedPresent = this.id;
-    
-
     if (resultNum === '') {
         resultNum = (+displayNum);
         operatorPressedPast = this.id;        
@@ -60,44 +56,39 @@ function clickOperator() {
         resultNum = calculate(resultNum);
         operatorPressedPast = operatorPressedPresent;
     }
-
     displayOperator.innerHTML='';
     displayOperator.append(operatorPressedPast);
-
     displayBox.innerHTML='';
     displayNum = '';
-    
     resultBox.innerHTML='';
-    resultBox.append(resultNum);
-    
+    resultBox.append(resultNum);    
 }
 
-function clickedEqual() {//have to fix no resultbox equal
+function clickedEqual() {
     if (resultNum === '' || operatorPressedPast == undefined) {
-        console.log(operatorPressedPast);
         resultNum = displayNum;
         displayBox.innerHTML='';
         displayNum = '';
         resultBox.innerHTML = '';
         resultBox.append(resultNum);
     } else {
-        resultNum = calculate(resultNum);
+        resultNum = calculate(+resultNum);
         displayBox.innerHTML = '';
         displayNum = '';
-
         resultBox.innerHTML = '';
         resultBox.append(resultNum);
     }
 }
 
 function makeNegative() {
-    if (displayNum === '') displayNum = resultNum.toString();
-    resultNum = '';
+    if (displayNum === '') {
+        displayNum = resultNum.toString();
+        resultNum = '';
+        resultBox.append(resultNum);
+    }
     let displayArray = displayNum.split('');
-    
     if (displayArray[0] === '-') {
         displayArray.shift();
-        
     } else {
         displayArray.unshift('-');
     }
@@ -109,41 +100,43 @@ function makeNegative() {
 function clearAll() {
     displayBox.innerHTML='';
     displayNum = '';
-    
     resultBox.innerHTML='';
     resultNum = '';
-
     displayOperator.innerHTML='';    
 }
 
-function insertDecimal() { //have to fix empty decimal str pass
+function insertDecimal() { 
     let tempArray = displayNum.split('');
     let decimalCheck = tempArray.some(function(item){
         if(item === '.'){
-            console.log('not');
             return true;
         } else {
             return false;
-
         }
     })
     if(!decimalCheck) {
-        console.log('here');
-        displayNum += '.';
+        if (displayNum === '') {displayNum += '0.';}
+        else {displayNum += '.';}
         displayBox.innerHTML = '';
         displayBox.append(displayNum);
-        console.log(displayNum);
     }
 }
 
+function animateButton() {
+    this.classList.add('animate');
+}
+
+function removeTransition(e) {
+    if (e.propertyName !== 'transform') return;
+    this.classList.remove('animate');
+}
+
 operators.forEach(operator => operator.addEventListener('click', clickOperator));
-
 numberButtons.forEach(buttons => buttons.addEventListener('click', clickNum));
-
 equals.addEventListener('click', clickedEqual);
-
 plusMinus.addEventListener('click',makeNegative);
-
 allClear.addEventListener('click', clearAll);
-
 decimal.addEventListener('click', insertDecimal);
+buttonAnimation.forEach(button => button.addEventListener('click', animateButton));
+buttonAnimation.forEach(button => button.addEventListener('transitionend', removeTransition));
+
